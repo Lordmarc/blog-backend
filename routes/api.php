@@ -12,8 +12,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::prefix('v1')->group(function () {
+        Route::get('/posts', [PostController::class, 'index']);
         Route::post('/posts', [PostController::class, 'store']);
         Route::post('/posts/{post}', [PostController::class, 'update']);
         Route::post('/posts/{post}', [CommentController::class, 'store']);
+        Route::get('/posts/{post}/comments', [CommentController::class, 'comments']);
     });
 });

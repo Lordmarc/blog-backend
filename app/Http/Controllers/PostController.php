@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Posts\StoreRequest;
+use App\Http\Requests\Posts\UpdateRequest;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
@@ -10,12 +12,14 @@ use App\Models\User;
 
 class PostController extends Controller
 {
-    public function store(Request $request)
+    public function index(){
+        $posts = Post::all();
+        
+        return response()->json($posts);
+    }
+    public function store(StoreRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required',
-            'content' => 'required'
-        ]);
+        $validated = $request->validated();
 
         $slug = Post::generateSlug($validated['title']);
 
@@ -29,12 +33,10 @@ class PostController extends Controller
         return response()->json($post, 201);
     }
 
-    public function update(Request $request, Post $post)
+    public function update(UpdateRequest $request, Post $post)
     {
-        $validated = $request->validate([
-            'title' => 'nullable|string',
-            'content' => 'nullable|string',
-        ]);
+        $this->authorize('update', $post);
+        $validated = $request->validated();
 
         if(isset($validated['title'])){
             $validated['slug'] = Post::generateSlug($validated['title']);
