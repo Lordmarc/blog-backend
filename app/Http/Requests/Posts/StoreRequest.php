@@ -23,7 +23,8 @@ class StoreRequest extends FormRequest
     {
         $rules = [
             'title' => 'required',
-            'content' => 'required'
+            'content' => 'required',
+            'image' =>  'nullable|image|mimes:jpg,jpeg,png,webp|max: 2048'
         ];
         return $rules;
     }

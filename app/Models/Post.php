@@ -35,4 +35,16 @@ class Post extends Model
         
         return $slug;
     }
+
+    public function scopePostsCount($query){
+        return $query->count();
+    }
+
+    public function scopePublished($query){
+        return $query->where('status', 'published');
+    }
+
+    public function scopeDrafts($query){
+        return $query->where('status', 'draft');
+    }
 }
