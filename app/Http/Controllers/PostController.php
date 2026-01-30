@@ -14,7 +14,7 @@ use App\Models\User;
 class PostController extends Controller
 {
     public function index(){
-        $posts = Post::all();
+        $posts = Post::with('user')->orderBy('created_at', 'descgi')->get();
         $postsCount = Post::postsCount();
         $published = Post::published()->count();
         $drafts = Post::drafts()->count();
