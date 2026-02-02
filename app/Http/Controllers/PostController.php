@@ -10,11 +10,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Tag;
 
 class PostController extends Controller
 {
     public function index(){
-        $posts = Post::with('user')->orderBy('created_at', 'descgi')->get();
+        $posts = Post::with('user')->orderBy('created_at', 'desc')->get();
         $postsCount = Post::postsCount();
         $published = Post::published()->count();
         $drafts = Post::drafts()->count();
@@ -39,6 +40,8 @@ class PostController extends Controller
 
         $slug = Post::generateSlug($validated['title']);
 
+      
+
         $post = $request->user()->posts()->create([
             'title' => $validated['title'],
             'content' => $validated['content'],
@@ -46,6 +49,20 @@ class PostController extends Controller
             'slug' => $slug,
             'status' => $status
         ]);
+
+          if($request->has('tags')){
+            $tagsId = [];
+
+            foreach($request->tags as $tagName){
+                $tag = Tag::firstOrCreate([
+                    'name' => strtolower($tagName)
+                ]);
+
+                $tagsId[] = $tag->id;
+            }
+
+            $post->tags()->sync($tagsId);
+        }
 
         ActivityLog::create([
             'type' => 'Post',
@@ -57,7 +74,7 @@ class PostController extends Controller
             ]
         ]);
 
-        return response()->json($post, 201);
+        return response()->json($post->load('tags'), 201);
     }
 
     public function update(UpdateRequest $request, Post $post)
@@ -75,5 +92,16 @@ class PostController extends Controller
             'success' => 'Updated Successfully!',
             'post' => $post->fresh(),
         ],200);
+    }
+
+    public function show($slug){
+
+    $post = Post::with('user', 'tags') -> where('slug', $slug)->first();
+
+    if(!$post){
+        return response()->json(['error' => 'Post not found'], 404);
+    }
+
+    return response()->json($post);
     }
 }
