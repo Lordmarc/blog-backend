@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 
@@ -22,8 +23,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/posts', [PostController::class, 'index']);
         Route::post('/posts', [PostController::class, 'store']);
         Route::post('/posts/{post}', [PostController::class, 'update']);
-        Route::post('/posts/{post}', [CommentController::class, 'store']);
+        Route::post('/posts/{post}/comment', [CommentController::class, 'store']);
         Route::get('/posts/{post}/comments', [CommentController::class, 'comments']);
+
         Route::get('/posts/{slug}', [PostController::class, 'show']);
     });
 });
