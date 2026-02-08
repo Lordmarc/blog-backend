@@ -25,6 +25,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'gender',
+        'active'
     ];
 
     /**
@@ -52,5 +54,9 @@ class User extends Authenticatable
 
     public function posts(){
         return $this->hasMany(Post::class);
+    }
+
+    public function activityLogs(){
+        return $this->hasMany(ActivityLog::class);
     }
 }

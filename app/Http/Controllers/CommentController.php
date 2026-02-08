@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Comments\StoreRequest;
 use Illuminate\Http\Request;
 use App\Models\Post;
 
@@ -12,17 +13,15 @@ class CommentController extends Controller
     {
         $comments = $post->comments()->get();
 
-        return response()->json([ 'comments' => $comments ],200);
+        return response()->json($comments);
     } 
-    public function store(Request $request, Post $post)
+    public function store(StoreRequest $request, Post $post)
     {   
-        $validated = $request->validate([
-            'comment' => 'required|string',
-        ]);
+            
 
         $comment = $post->comments()->create([
             'user_id' => auth()->id(),
-            'comment' => $validated['comment']
+            'comment' => $request->comment
         ]);
 
         return response()->json([

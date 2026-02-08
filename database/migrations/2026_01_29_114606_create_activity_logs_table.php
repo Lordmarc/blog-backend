@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('title');
-            $table->string('slug');
-            $table->string('content');
-            $table->enum('status',['Draft', 'Published']);
+            $table->string('type');
+            $table->string('action'); 
+            $table->string('description');
+            $table->foreignId('user_id')->nullable();
+            $table->json('meta')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('activity_logs');
     }
 };
