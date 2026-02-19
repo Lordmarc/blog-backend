@@ -22,10 +22,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('v1')->group(function () {
         Route::get('/posts', [PostController::class, 'index']);
         Route::post('/posts', [PostController::class, 'store']);
+        Route::get('/posts/blog', [PostController::class, 'showTopTags']);
         Route::post('/posts/{post}', [PostController::class, 'update']);
         Route::post('/posts/{post}/comment', [CommentController::class, 'store']);
         Route::get('/posts/{post}/comments', [CommentController::class, 'comments']);
-
         Route::get('/posts/{slug}', [PostController::class, 'show']);
+ 
     });
 });

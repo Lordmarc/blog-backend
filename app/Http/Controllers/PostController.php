@@ -6,6 +6,7 @@ use App\Http\Requests\Posts\StoreRequest;
 use App\Http\Requests\Posts\UpdateRequest;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
@@ -103,5 +104,20 @@ class PostController extends Controller
     }
 
     return response()->json($post);
+    }
+
+    public function showTopTags(){
+        $popularTags = Cache::remember('tags.top.5', 60, function(){
+        return Tag::withCount('posts')
+                ->orderBy('posts_count','desc')
+                ->take(5)
+                ->get(['id', 'name']);
+
+        
+        });
+        return response()->json([
+            'success' => true,
+            'data' => $popularTags
+        ]);
     }
 }
