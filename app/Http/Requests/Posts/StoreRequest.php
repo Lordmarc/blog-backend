@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Posts;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+
 
 class StoreRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class StoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::user()?->role === "admin";
     }
 
     /**
@@ -21,11 +23,14 @@ class StoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
-            'title' => 'required',
-            'content' => 'required',
-            'image' =>  'nullable|image|mimes:jpg,jpeg,png,webp|max: 2048'
+        return [
+            'title' => 'required|string|max:255',
+            'content' => 'required|string|min:10',
+            'status' => 'nullable|in:Published,Draft',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'tags' => 'nullable|array',
+            'tags.*' => 'string|max:50',
         ];
-        return $rules;
     }
-}
+    }
+

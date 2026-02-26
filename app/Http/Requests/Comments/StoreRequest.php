@@ -24,6 +24,7 @@ class StoreRequest extends FormRequest
         return [
             'comment' => 'required|string',
             'parent_id' => 'nullable|exists:comments,id'
+       
         ];
     }
 }

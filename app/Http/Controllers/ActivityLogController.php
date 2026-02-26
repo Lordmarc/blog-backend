@@ -9,7 +9,8 @@ class ActivityLogController extends Controller
 {
     public function index()
     {
-        $activities = ActivityLog::with('user')
+        $activities = ActivityLog::with('user:id,name')
+        ->select('id','type','action','description','user_id','created_at')
         ->latest()
         ->limit(20)
         ->get();

@@ -7,14 +7,16 @@ use App\Http\Requests\Posts\UpdateRequest;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Tag;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class PostController extends Controller
 {
+    use AuthorizesRequests;
     public function index(){
         $posts = Post::with('user')->orderBy('created_at', 'desc')->get();
         $postsCount = Post::postsCount();
@@ -78,6 +80,7 @@ class PostController extends Controller
         return response()->json($post->load('tags'), 201);
     }
 
+
     public function update(UpdateRequest $request, Post $post)
     {
         $this->authorize('update', $post);
@@ -94,6 +97,25 @@ class PostController extends Controller
             'post' => $post->fresh(),
         ],200);
     }
+
+  public function destroy(Post $post)
+{
+    \Log::info('User role and ownership', [
+        'user_id' => auth()->id(),
+        'user_role' => auth()->user()->role,
+        'post_user_id' => $post->user_id,
+    ]);
+
+    $this->authorize('delete', $post);
+
+    if ($post->image) {
+        Storage::disk('public')->delete($post->image);
+    }
+
+    $post->delete();
+
+    return response()->json(['success' => 'Post deleted successfully!']);
+}
 
     public function show($slug){
 

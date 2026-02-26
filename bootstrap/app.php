@@ -3,6 +3,10 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Models\Post;
+use App\Policies\PostPolicy;
+use App\Providers\AuthServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,4 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })->withProviders([
+        AuthServiceProvider::class,
+    ])
+    ->create();
